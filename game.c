@@ -1,19 +1,20 @@
+
 #include <stdio.h>
 #include "game.h"
 
 void initializeGame(Game *game) {
     int i, j;
 
-    for (i = 0; i <= SIZE; i++)
-        for (j = 0; j < SIZE; j++)
+    for (i = 0; i <= ROWS; i++)
+        for (j = 0; j < COLS; j++)
             game->horizontal[i][j] = 0;
 
-    for (i = 0; i < SIZE; i++)
-        for (j = 0; j <= SIZE; j++)
+    for (i = 0; i < ROWS; i++)
+        for (j = 0; j <= COLS; j++)
             game->vertical[i][j] = 0;
 
-    for (i = 0; i < SIZE; i++)
-        for (j = 0; j < SIZE; j++)
+    for (i = 0; i < ROWS; i++)
+        for (j = 0; j < COLS; j++)
             game->boxes[i][j] = 0;
 
     game->scores[0] = 0;
@@ -27,21 +28,21 @@ void displayBoard(const Game *game) {
 
     printf("\n");
 
-    for (i = 0; i < SIZE; i++) {
-        for (j = 0; j < SIZE; j++) {
+    for (i = 0; i < ROWS; i++) {
+        for (j = 0; j < COLS; j++) {
             printf(".");
             printf("%s", game->horizontal[i][j] ? "---" : "   ");
         }
         printf(".\n");
 
-        for (j = 0; j < SIZE; j++) {
+        for (j = 0; j < COLS; j++) {
             printf("%c   ", game->vertical[i][j] ? '|' : ' ');
         }
-        printf("%c\n", game->vertical[i][SIZE] ? '|' : ' ');
+        printf("%c\n", game->vertical[i][COLS] ? '|' : ' ');
     }
 
-    for (j = 0; j < SIZE; j++)
-        printf(".%s", game->horizontal[SIZE][j] ? "---" : "   ");
+    for (j = 0; j < COLS; j++)
+        printf(".%s", game->horizontal[ROWS][j] ? "---" : "   ");
 
     printf(".\n\n");
     printf("Player 1: %d | Player 2: %d\n",
@@ -49,7 +50,7 @@ void displayBoard(const Game *game) {
 }
 
 int checkBox(Game *game, int row, int col) {
-    if (row < 0 || row >= SIZE || col < 0 || col >= SIZE)
+    if (row < 0 || row >= ROWS || col < 0 || col >= COLS)
         return 0;
 
     if (game->boxes[row][col] != 0)
@@ -72,7 +73,7 @@ int makeMove(Game *game, char direction, int row, int col) {
     int completed = 0;
 
     if (direction == 'H' || direction == 'h') {
-        if (row < 0 || row > SIZE || col < 0 || col >= SIZE)
+        if (row < 0 || row > ROWS || col < 0 || col >= COLS)
             return -1;
 
         if (game->horizontal[row][col])
@@ -81,7 +82,7 @@ int makeMove(Game *game, char direction, int row, int col) {
         game->horizontal[row][col] = 1;
 
     } else if (direction == 'V' || direction == 'v') {
-        if (row < 0 || row >= SIZE || col < 0 || col > SIZE)
+        if (row < 0 || row >= ROWS || col < 0 || col > COLS)
             return -1;
 
         if (game->vertical[row][col])
@@ -98,12 +99,12 @@ int makeMove(Game *game, char direction, int row, int col) {
     if (direction == 'H' || direction == 'h') {
         if (row > 0)
             completed += checkBox(game, row - 1, col);
-        if (row < SIZE)
+        if (row < ROWS)
             completed += checkBox(game, row, col);
     } else {
         if (col > 0)
             completed += checkBox(game, row, col - 1);
-        if (col < SIZE)
+        if (col < COLS)
             completed += checkBox(game, row, col);
     }
 
@@ -114,7 +115,7 @@ int makeMove(Game *game, char direction, int row, int col) {
 }
 
 int isGameOver(const Game *game) {
-    return game->moves == 2 * SIZE * (SIZE + 1);
+    return game->moves == ROWS * (COLS + 1) + COLS * (ROWS + 1);
 }
 
 void displayWinner(const Game *game) {
@@ -129,3 +130,4 @@ void displayWinner(const Game *game) {
     else
         printf("It's a tie!\n");
 }
+
