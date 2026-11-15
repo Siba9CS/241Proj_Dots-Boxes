@@ -10,7 +10,7 @@ int main(void) {
     initializeGame(&game);
 
     printf("Welcome to Dots and Boxes!\n");
-    printf("Board size: 3 x 3 boxes\n");
+    printf("Board size: 4 x 5 boxes\n");
     printf("Enter H for horizontal or V for vertical.\n");
 
     while (!isGameOver(&game)) {
