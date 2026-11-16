@@ -26,7 +26,7 @@ void board_print(const Board *b)
 
     printf("  ");
     for (c = 0; c <= BOX_COLS; c++)
-        printf("%-4d ", c);
+        printf("%-2d ", c);
     printf("\n");
 
     for (r = 0; r < BOX_ROWS; r++) {
