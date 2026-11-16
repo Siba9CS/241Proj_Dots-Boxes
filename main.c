@@ -42,6 +42,11 @@ int main(void)
         if (result == 0)
             player = 1 - player;
     }
+    
+    printf("************************************************************\n");
+    printf("Player A score: %d\n", board.score[0]);
+    printf("Player B score: %d\n", board.score[1]);
+    printf("************************************************************\n");
 
     board_print(&board);
 
