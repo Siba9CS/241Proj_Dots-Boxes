@@ -1,12 +1,14 @@
-CC     = gcc
+
+CC = gcc
 CFLAGS = -Wall -Wextra -g
+
 TARGET = dotsandboxes
-OBJS   = main.o board.o game.o
+OBJS = main.o board.o
 
 $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS)
 
-%.o: %.c board.h game.h
+%.o: %.c
 	$(CC) $(CFLAGS) -c $<
 
 valgrind: $(TARGET)
