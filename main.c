@@ -16,7 +16,7 @@ int main(void)
     while (!board_is_full(&board)) {
         board_print(&board);
 
-        printf("Player %c's turn. Enter the row and column of the first dot (e.g., A0 -> 0 0) and second dot: ",
+        printf("Player %c's turn. Enter the row and column of the first dot (e.g., A0 -> 0 0) and second dot: \n",
                'A' + player);
 
         if (scanf("%d %d %d %d", &r1, &c1, &r2, &c2) != 4) {
@@ -34,10 +34,10 @@ int main(void)
         if (result == 0) {
             player = 1 - player;
         } else {
-            printf("************************************************************\n");
+            printf("***************************************************************************\n");
             printf("Player A score: %d\n", board.score[0]);
             printf("Player B score: %d\n", board.score[1]);
-            printf("************************************************************\n");
+            printf("***************************************************************************\n");
         }
     }
 
