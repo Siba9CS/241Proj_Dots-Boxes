@@ -12,22 +12,14 @@ int main(void)
     board_init(&board);
 
     printf("Welcome to Dots and Boxes!\n");
-    printf("Board size: 4 x 5 boxes\n");
 
     while (!board_is_full(&board)) {
         board_print(&board);
 
-        printf("\nPlayer %c's turn\n", 'A' + player);
-        printf("Enter the row and column of the first dot: ");
+        printf("Player %c's turn. Enter the row and column of the first dot (e.g., A0 -> 0 0) and second dot: ",
+               'A' + player);
 
-        if (scanf("%d %d", &r1, &c1) != 2) {
-            printf("Invalid input!\n");
-            return 1;
-        }
-
-        printf("Enter the row and column of the second dot: ");
-
-        if (scanf("%d %d", &r2, &c2) != 2) {
+        if (scanf("%d %d %d %d", &r1, &c1, &r2, &c2) != 4) {
             printf("Invalid input!\n");
             return 1;
         }
@@ -39,14 +31,15 @@ int main(void)
             continue;
         }
 
-        if (result == 0)
+        if (result == 0) {
             player = 1 - player;
+        } else {
+            printf("************************************************************\n");
+            printf("Player A score: %d\n", board.score[0]);
+            printf("Player B score: %d\n", board.score[1]);
+            printf("************************************************************\n");
+        }
     }
-    
-    printf("************************************************************\n");
-    printf("Player A score: %d\n", board.score[0]);
-    printf("Player B score: %d\n", board.score[1]);
-    printf("************************************************************\n");
 
     board_print(&board);
 
@@ -63,3 +56,4 @@ int main(void)
 
     return 0;
 }
+
