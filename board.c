@@ -34,18 +34,22 @@ void board_print(const Board *b)
 
         for (c = 0; c < BOX_COLS; c++) {
             printf(".");
-            printf("%s", b->hLine[r][c] ? "---" : "   ");
+            printf("%s", b->hLine[r][c] ? "───" : "   ");
         }
         printf(".\n");
 
         printf("  ");
 
-        for (c = 0; c < BOX_COLS; c++) {
-            printf("%c", b->vLine[r][c] ? '|' : ' ');
-            printf("%c", b->owner[r][c] == ' ' ? ' ' : b->owner[r][c]);
-        }
+for (c = 0; c < BOX_COLS; c++) {
+    printf("%c", b->vLine[r][c] ? '|' : ' ');
 
-        printf("%c\n", b->vLine[r][BOX_COLS] ? '|' : ' ');
+    if (b->owner[r][c] == ' ')
+        printf("   ");
+    else
+        printf(" %c ", b->owner[r][c]);
+}
+
+printf("%c\n", b->vLine[r][BOX_COLS] ? '|' : ' ');
     }
 
     printf("%d ", BOX_ROWS);
