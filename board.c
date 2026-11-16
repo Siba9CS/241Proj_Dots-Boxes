@@ -53,16 +53,22 @@ static int box_complete(const Board *b, int r, int c)
 }
 
 
+
 static int try_claim(Board *b, int r, int c, int player)
 {
+    if (player < 0 || player > 1)
+        return 0;
+
     if (b->owner[r][c] == ' ' && box_complete(b, r, c)) {
         b->owner[r][c] = (char)('A' + player);
         b->score[player]++;
         b->boxesTaken++;
         return 1;
     }
+
     return 0;
 }
+
 
 
 int make_move(Board *b, int r1, int c1, int r2, int c2, int player)
