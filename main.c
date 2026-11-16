@@ -1,42 +1,64 @@
-#include <stdio.h>
-#include "game.h"
 
-int main(void) {
-    Game game;
-    char direction;
-    int row, col;
+#include <stdio.h>
+#include "board.h"
+
+int main(void)
+{
+    Board board;
+    int r1, c1, r2, c2;
+    int player = 0;
     int result;
 
-    initializeGame(&game);
+    board_init(&board);
 
     printf("Welcome to Dots and Boxes!\n");
     printf("Board size: 4 x 5 boxes\n");
-    printf("Enter H for horizontal or V for vertical.\n");
 
-    while (!isGameOver(&game)) {
-        displayBoard(&game);
+    while (!board_is_full(&board)) {
+        board_print(&board);
 
-        printf("\nPlayer %d's turn\n", game.currentPlayer);
-        printf("Enter direction, row and column: ");
+        printf("\nPlayer %c's turn\n", 'A' + player);
+        printf("Enter the row and column of the first dot: ");
 
-        if (scanf(" %c %d %d", &direction, &row, &col) != 3) {
+        if (scanf("%d %d", &r1, &c1) != 2) {
             printf("Invalid input!\n");
             return 1;
         }
 
-        result = makeMove(&game, direction, row, col);
+        printf("Enter the row and column of the second dot: ");
 
-        if (result == -1) {
+        if (scanf("%d %d", &r2, &c2) != 2) {
+            printf("Invalid input!\n");
+            return 1;
+        }
+
+        result = make_move(&board, r1, c1, r2, c2, player);
+
+        if (result < 0) {
             printf("Invalid move! Try again.\n");
             continue;
         }
 
-        if (result > 0)
-            printf("You completed %d box(es)! Play again.\n", result);
+        if (result == 0)
+            player = 1 - player;
     }
 
-    displayBoard(&game);
-    displayWinner(&game);
+    board_print(&board);
+
+    printf("\nFinal scores:\n");
+    printf("Player A: %d\n", board.score[0]);
+    printf("Player B: %d\n", board.score[1]);
+
+    if (board.score[0] > board.score[1])
+        printf("Player A wins!\n");
+    else if (board.score[1] > board.score[0])
+        printf("Player B wins!\n");
+    else
+        printf("It's a tie!\n");
+
+    return 0;
+}
+
 
     return 0;
 }
