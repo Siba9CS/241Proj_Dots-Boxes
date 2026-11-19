@@ -1,133 +1,75 @@
-
 #include <stdio.h>
 #include "game.h"
 
-void initializeGame(Game *game) {
-    int i, j;
-
-    for (i = 0; i <= ROWS; i++)
-        for (j = 0; j < COLS; j++)
-            game->horizontal[i][j] = 0;
-
-    for (i = 0; i < ROWS; i++)
-        for (j = 0; j <= COLS; j++)
-            game->vertical[i][j] = 0;
-
-    for (i = 0; i < ROWS; i++)
-        for (j = 0; j < COLS; j++)
-            game->boxes[i][j] = 0;
-
-    game->scores[0] = 0;
-    game->scores[1] = 0;
-    game->currentPlayer = 1;
-    game->moves = 0;
+void game_init(Game *g)
+{
+    board_init(&g->board);
+    g->currentPlayer = 0;
 }
 
-void displayBoard(const Game *game) {
-    int i, j;
+int game_move(Game *g, int r1, int c1, int r2, int c2)
+{
+    int result = make_move(&g->board, r1, c1, r2, c2, g->currentPlayer);
 
-    printf("\n");
+    if (result == 0)
+        g->currentPlayer = 1 - g->currentPlayer;
 
-    for (i = 0; i < ROWS; i++) {
-        for (j = 0; j < COLS; j++) {
-            printf(".");
-            printf("%s", game->horizontal[i][j] ? "---" : "   ");
-        }
-        printf(".\n");
-
-        for (j = 0; j < COLS; j++) {
-            printf("%c   ", game->vertical[i][j] ? '|' : ' ');
-        }
-        printf("%c\n", game->vertical[i][COLS] ? '|' : ' ');
-    }
-
-    for (j = 0; j < COLS; j++)
-        printf(".%s", game->horizontal[ROWS][j] ? "---" : "   ");
-
-    printf(".\n\n");
-    printf("Player 1: %d | Player 2: %d\n",
-           game->scores[0], game->scores[1]);
+    return result;
 }
 
-int checkBox(Game *game, int row, int col) {
-    if (row < 0 || row >= ROWS || col < 0 || col >= COLS)
-        return 0;
-
-    if (game->boxes[row][col] != 0)
-        return 0;
-
-    if (game->horizontal[row][col] &&
-        game->horizontal[row + 1][col] &&
-        game->vertical[row][col] &&
-        game->vertical[row][col + 1]) {
-
-        game->boxes[row][col] = game->currentPlayer;
-        game->scores[game->currentPlayer - 1]++;
-        return 1;
-    }
-
-    return 0;
+int game_is_over(const Game *g)
+{
+    return board_is_full(&g->board);
 }
 
-int makeMove(Game *game, char direction, int row, int col) {
-    int completed = 0;
-
-    if (direction == 'H' || direction == 'h') {
-        if (row < 0 || row > ROWS || col < 0 || col >= COLS)
-            return -1;
-
-        if (game->horizontal[row][col])
-            return -1;
-
-        game->horizontal[row][col] = 1;
-
-    } else if (direction == 'V' || direction == 'v') {
-        if (row < 0 || row >= ROWS || col < 0 || col > COLS)
-            return -1;
-
-        if (game->vertical[row][col])
-            return -1;
-
-        game->vertical[row][col] = 1;
-
-    } else {
-        return -1;
-    }
-
-    game->moves++;
-
-    if (direction == 'H' || direction == 'h') {
-        if (row > 0)
-            completed += checkBox(game, row - 1, col);
-        if (row < ROWS)
-            completed += checkBox(game, row, col);
-    } else {
-        if (col > 0)
-            completed += checkBox(game, row, col - 1);
-        if (col < COLS)
-            completed += checkBox(game, row, col);
-    }
-
-    if (completed == 0)
-        game->currentPlayer = 3 - game->currentPlayer;
-
-    return completed;
+void game_print_scores(const Game *g)
+{
+    printf("***************************************************************************\n");
+    printf("Player A score: %d\n", g->board.score[0]);
+    printf("Player B score: %d\n", g->board.score[1]);
+    printf("***************************************************************************\n");
 }
 
-int isGameOver(const Game *game) {
-    return game->moves == ROWS * (COLS + 1) + COLS * (ROWS + 1);
-}
+void game_print_winner(const Game *g)
+{
+    printf("\nFinal scores:\n");
+    printf("Player A: %d\n", g->board.score[0]);
+    printf("Player B: %d\n", g->board.score[1]);
 
-void displayWinner(const Game *game) {
-    printf("\nFinal score:\n");
-    printf("Player 1: %d\n", game->scores[0]);
-    printf("Player 2: %d\n", game->scores[1]);
-
-    if (game->scores[0] > game->scores[1])
-        printf("Player 1 wins!\n");
-    else if (game->scores[1] > game->scores[0])
-        printf("Player 2 wins!\n");
+    if (g->board.score[0] > g->board.score[1])
+        printf("Player A wins!\n");
+    else if (g->board.score[1] > g->board.score[0])
+        printf("Player B wins!\n");
     else
         printf("It's a tie!\n");
 }
 
+void game_run(Game *g)
+{
+    int r1, c1, r2, c2, result;
+
+    while (!game_is_over(g)) {
+        board_print(&g->board);
+
+        printf("Player %c's turn. Enter the row and column of the first dot (e.g., A0 -> 0 0) and second dot: \n",
+               'A' + g->currentPlayer);
+
+        if (scanf("%d %d %d %d", &r1, &c1, &r2, &c2) != 4) {
+            printf("Invalid input!\n");
+            return;
+        }
+
+        result = game_move(g, r1, c1, r2, c2);
+
+        if (result < 0) {
+            printf("Invalid move! Try again.\n");
+            continue;
+        }
+
+        if (result > 0)
+            game_print_scores(g);
+    }
+
+    board_print(&g->board);
+    game_print_winner(g);
+}

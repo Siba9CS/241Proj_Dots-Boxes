@@ -1,25 +1,18 @@
-
 #ifndef GAME_H
 #define GAME_H
 
-#define ROWS 4
-#define COLS 5
+#include "board.h"
 
 typedef struct {
-    int horizontal[ROWS + 1][COLS];
-    int vertical[ROWS][COLS + 1];
-    int boxes[ROWS][COLS];
-    int scores[2];
-    int currentPlayer;
-    int moves;
+    Board board;
+    int currentPlayer;   /* 0 = A, 1 = B */
 } Game;
 
-void initializeGame(Game *game);
-void displayBoard(const Game *game);
-int makeMove(Game *game, char direction, int row, int col);
-int checkBox(Game *game, int row, int col);
-int isGameOver(const Game *game);
-void displayWinner(const Game *game);
+void game_init(Game *g);
+int  game_move(Game *g, int r1, int c1, int r2, int c2);
+int  game_is_over(const Game *g);
+void game_print_scores(const Game *g);
+void game_print_winner(const Game *g);
+void game_run(Game *g);
 
 #endif
-
